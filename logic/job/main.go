@@ -13,6 +13,8 @@ func main() {
 		panic(err)
 	}
 	log.LoadConfiguration(Conf.Log)
+	log.Info("job[%s] start", Ver)
+
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	//comet
 	if err := InitComet(Conf.Comets); err != nil {

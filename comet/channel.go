@@ -3,8 +3,7 @@ package main
 import (
 	"goim/libs/bufio"
 	"goim/libs/proto"
-
-	log "github.com/thinkboy/log4go"
+	// log "github.com/thinkboy/log4go"
 )
 
 // Channel used by message pusher send msg to write goroutine.

@@ -69,6 +69,9 @@ func retPWrite(w http.ResponseWriter, r *http.Request, res map[string]interface{
 		return
 	}
 	dataStr := string(data)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+
 	if _, err := w.Write([]byte(dataStr)); err != nil {
 		log.Error("w.Write(\"%s\") error(%v)", dataStr, err)
 	}
@@ -92,6 +95,7 @@ func Push(w http.ResponseWriter, r *http.Request) {
 		res       = map[string]interface{}{"ret": OK}
 	)
 	defer retPWrite(w, r, res, &body, time.Now())
+
 	if bodyBytes, err = ioutil.ReadAll(r.Body); err != nil {
 		log.Error("ioutil.ReadAll() failed (%s)", err)
 		res["ret"] = InternalErr

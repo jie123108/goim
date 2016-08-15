@@ -2,10 +2,10 @@ package main
 
 import (
 	"flag"
+	log "github.com/thinkboy/log4go"
 	"goim/libs/perf"
 	"runtime"
-
-	log "github.com/thinkboy/log4go"
+	"yf-im/yfgoim"
 )
 
 func main() {
@@ -25,7 +25,7 @@ func main() {
 	MergeCount()
 	go SyncCount()
 	// logic rpc
-	if err := InitRPC(NewDefaultAuther()); err != nil {
+	if err := InitRPC(yfgoim.NewYfAuther()); err != nil {
 		panic(err)
 	}
 	if err := InitHTTP(); err != nil {

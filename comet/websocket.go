@@ -92,6 +92,9 @@ func ServeWebSocket(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "Method Not Allowed", 405)
 		return
 	}
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+
 	ws, err := upgrader.Upgrade(w, req, nil)
 	if err != nil {
 		log.Error("Websocket Upgrade error(%v), userAgent(%s)", err, req.UserAgent())
@@ -199,6 +202,7 @@ func (server *Server) dispatchWebsocket(key string, conn *websocket.Conn, ch *Ch
 					err = nil // must be empty error
 					break
 				}
+				log.Debug("----------------------- write a message -------------------")
 				if err = p.WriteWebsocket(conn); err != nil {
 					goto failed
 				}
@@ -208,6 +212,7 @@ func (server *Server) dispatchWebsocket(key string, conn *websocket.Conn, ch *Ch
 		default:
 			// TODO room-push support
 			// just forward the message
+			log.Debug("----------------------- forward the message -------------------")
 			if err = p.WriteWebsocket(conn); err != nil {
 				goto failed
 			}
