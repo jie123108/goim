@@ -62,7 +62,10 @@ func (r *RPC) Connect(arg *proto.ConnArg, reply *proto.ConnReply) (err error) {
 		uid int64
 		seq int32
 	)
-	uid, reply.RoomId = r.auther.Auth(arg.Token)
+	uid, reply.RoomId, err = r.auther.Auth(arg.Body)
+	if err != nil {
+		return
+	}
 	if seq, err = connect(uid, arg.Server, reply.RoomId); err == nil {
 		reply.Key = encode(uid, seq)
 	}
@@ -85,5 +88,18 @@ func (r *RPC) Disconnect(arg *proto.DisconnArg, reply *proto.DisconnReply) (err 
 		return
 	}
 	reply.Has, err = disconnect(uid, seq, arg.RoomId)
+	return
+}
+
+// Send send message
+func (r *RPC) Send(arg *proto.SendArg, reply *proto.SendReply) (err error) {
+	if arg == nil {
+		err = ErrConnectArgs
+		log.Error("Send() error(%v)", err)
+		return
+	}
+
+	err = sendmsg(arg.Body)
+
 	return
 }

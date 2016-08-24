@@ -25,9 +25,13 @@ func (operator *DefaultOperator) Operate(p *proto.Proto) error {
 		body []byte
 	)
 	if p.Operation == define.OP_SEND_SMS {
-		// call suntao's api
-		// p.Body = nil
 		p.Operation = define.OP_SEND_SMS_REPLY
+		if err := send(p); err != nil {
+			log.Error("send msg: %s failed! err: %v", string(p.Body), err)
+			p.Body = []byte("{\"error\":\"" + err.Error() + "\"}")
+		} else {
+			p.Body = nil
+		}
 		log.Info("send sms proto: %v", p)
 	} else if p.Operation == define.OP_TEST {
 		log.Debug("test operation: %s", body)

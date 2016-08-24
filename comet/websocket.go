@@ -202,7 +202,7 @@ func (server *Server) dispatchWebsocket(key string, conn *websocket.Conn, ch *Ch
 					err = nil // must be empty error
 					break
 				}
-				log.Debug("----------------------- write a message -------------------")
+				// log.Debug("----------------------- write a message -------------------")
 				if err = p.WriteWebsocket(conn); err != nil {
 					goto failed
 				}
@@ -212,7 +212,7 @@ func (server *Server) dispatchWebsocket(key string, conn *websocket.Conn, ch *Ch
 		default:
 			// TODO room-push support
 			// just forward the message
-			log.Debug("----------------------- forward the message -------------------")
+			// log.Debug("----------------------- forward the message -------------------")
 			if err = p.WriteWebsocket(conn); err != nil {
 				goto failed
 			}
@@ -247,6 +247,7 @@ func (server *Server) authWebsocket(conn *websocket.Conn, p *proto.Proto) (key s
 	if key, rid, heartbeat, err = server.operator.Connect(p); err != nil {
 		return
 	}
+	// TODO: 返回心跳时间间隔
 	p.Body = emptyJSONBody
 	p.Operation = define.OP_AUTH_REPLY
 	err = p.WriteWebsocket(conn)
