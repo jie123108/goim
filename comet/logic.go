@@ -17,6 +17,7 @@ var (
 	logicServicePing       = "RPC.Ping"
 	logicServiceConnect    = "RPC.Connect"
 	logicServiceDisconnect = "RPC.Disconnect"
+	logicServiceSend       = "RPC.Send"
 )
 
 func InitLogicRpc(addrs string) (err error) {
@@ -72,7 +73,7 @@ func connect(p *proto.Proto) (key string, rid int32, heartbeat time.Duration, er
 		err = ErrLogic
 		return
 	}
-	arg := &proto.ConnArg{Token: string(p.Body), Server: Conf.ServerId}
+	arg := &proto.ConnArg{Body: p.Body, Server: Conf.ServerId}
 	reply := &proto.ConnReply{}
 	if err = logicRpcClient.Call(logicServiceConnect, arg, reply); err != nil {
 		log.Error("c.Call(\"%s\", \"%v\", &ret) error(%v)", logicServiceConnect, arg, err)
@@ -92,9 +93,24 @@ func disconnect(key string, roomId int32) (has bool, err error) {
 	arg := &proto.DisconnArg{Key: key, RoomId: roomId}
 	reply := &proto.DisconnReply{}
 	if err = logicRpcClient.Call(logicServiceDisconnect, arg, reply); err != nil {
-		log.Error("c.Call(\"%s\", \"%v\", &ret) error(%v)", logicServiceConnect, arg, err)
+		log.Error("c.Call(\"%s\", \"%v\", &ret) error(%v)", logicServiceDisconnect, arg, err)
 		return
 	}
 	has = reply.Has
+	return
+}
+
+func send(p *proto.Proto) (err error) {
+	if logicRpcClient == nil {
+		err = ErrLogic
+		return
+	}
+	arg := &proto.SendArg{Body: p.Body}
+	reply := &proto.SendReply{}
+	if err = logicRpcClient.Call(logicServiceSend, arg, reply); err != nil {
+		log.Error("c.Call(\"%s\", \"%v\", &ret) error(%v)", logicServiceSend, arg, err)
+		return
+	}
+
 	return
 }
